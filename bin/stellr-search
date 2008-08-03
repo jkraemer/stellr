@@ -1,0 +1,50 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'optparse'
+
+begin
+  gem 'stellr' 
+rescue Gem::LoadError
+  $:.unshift(File.dirname(__FILE__), "../lib")
+end
+
+require 'stellr'
+require 'stellr/client'
+
+options = OptionParser.new do |opts|
+  
+  opts.banner = "Usage: #{File.basename(__FILE__)} [options] collection query"
+  
+  opts.on("-c", "--config CONFIG", "config file location") do |value|
+    @config_file = value
+  end
+  
+  opts.on("-h", "--help", "show this help") do
+    @help = true
+  end
+end
+
+cmdline = options.parse( ARGV )
+query = cmdline.pop rescue nil
+collection_name = cmdline.pop
+
+if @help
+  puts options.to_s
+else
+  config = Stellr::Config.new @config_file
+  client = Stellr::Client.new config.drb_uri
+  collection = client.connect collection_name
+  puts "searching collection #{collection_name} for >#{query}< ..."
+  results = collection.search query, :limit => 10
+  if results.any?
+    puts "showing first 10 of #{results.total_hits} results"
+    results.each do |r| 
+      puts r[:id]
+    end
+  else
+    puts "no results for >#{query}<"
+  end
+end
+
+

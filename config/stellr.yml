@@ -1,0 +1,8 @@
+:port:      9010
+:host:      'localhost'
+:base_dir:  '/var/stellr'
+:data_dir:  'data'
+:log_dir:   'log'
+:tmp_dir:   'tmp'
+:conf_dir:  'conf'
+:log_level: :warn

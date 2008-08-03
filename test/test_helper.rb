@@ -1,0 +1,1 @@
+require 'stellr_test'

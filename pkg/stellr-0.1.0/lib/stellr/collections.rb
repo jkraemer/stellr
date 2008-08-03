@@ -1,0 +1,6 @@
+require 'stellr/collections/base'
+require 'stellr/collections/searchable_collection'
+require 'stellr/collections/writeable_collection'
+require 'stellr/collections/static'
+require 'stellr/collections/rsync'
+require 'stellr/collections/multi_collection'

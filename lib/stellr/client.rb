@@ -11,6 +11,7 @@ module Stellr
   #    stellr = Stellr::Client.new('druby://myserver.com:9000')
   #    collection = stellr.connect('myindex', :fields => { :content => { :store => :yes } })
   #    collection << { :content => 'lorem ipsum' }
+  #    collection.switch
   #    results = collection.search('lorem', :page => 1, :per_page => 10)
   #
   class Client
@@ -21,13 +22,21 @@ module Stellr
 
     # connects to a remote collection and returns a stub that can be used to
     # add records to the collection and to search for them.
-    def connect( collection_name, collection_args = nil )
-      @server.register collection_name, collection_args
-      ClientCollection.new @server, collection_name
+    #
+    # specify an array of collection names for the first argument to search
+    # multiple connections at once. No indexing is possible with such a
+    # MultiCollection.
+    def connect( collection_name, options = nil )
+      if Array === collection_name
+        multi_connect collection_name, options
+      else
+        @server.register collection_name, options
+        ClientCollection.new @server, collection_name
+      end
     end
 
-    # Connects to multiple remote collections at once. This allows to run
-    # searches across multiple physical collections.
+    # Connects to multiple remote collections at once on order to run
+    # cross-collection searches.
     def multi_connect( collection_names, options = {} )
       MultiCollection.new @server, collection_names, options
     end

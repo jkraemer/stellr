@@ -14,6 +14,7 @@ class RSyncCollectionTest < StellrTest
   end
 
   def test_create
+    @collection.close
     c = Stellr::Collections::Base.create('test', default_collection_options(:collection => :rsync))
     assert_equal Stellr::Collections::RSync, c.class
     c.close

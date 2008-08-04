@@ -19,7 +19,7 @@ module Stellr
       end
 
       def initialize( name, options )
-        @logger = options[:logger]
+        @logger = options[:logger] || (require 'logger'; Logger.new 'stellr.log')
         @name = name
         @options = options.dup
       end

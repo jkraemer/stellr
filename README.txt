@@ -1,6 +1,6 @@
 stellr
     by Jens Kraemer and Benjamin Krause
-    http://stellr.rubyforge.org/
+    http://rubyforge.org/projects/stellr
 
 == DESCRIPTION:
   

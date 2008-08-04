@@ -87,7 +87,7 @@ Stellr is a Ferret based standalone search server featuring a DRB and (soon to c
 
 (The MIT License)
 
-Copyright (c) 2007 FIX
+Copyright (c) 2008 Jens Kraemer, Benjamin Krause
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the

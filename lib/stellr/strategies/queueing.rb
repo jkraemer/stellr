@@ -18,6 +18,10 @@ module Stellr
         enqueue :add, [record, boost]
       end
       
+      def add_records(records)
+        enqueue :bulk_add, records
+      end
+      
       def delete_record( record )
         enqueue :delete, record
       end
@@ -47,12 +51,15 @@ module Stellr
       end
 
       # process a single task from the queue
-      def process_record( action, record )
+      # TODO refacoring: rename to process_task
+      def process_record( action, data )
         case action
           when :add
-            @collection.add_record( *record )
+            @collection.add_record( *data )
+          when :bulk_add
+            @collection.add_records data
           when :delete
-            @collection.delete_record record
+            @collection.delete_record data
           else
             raise "UnknownAction"
         end

@@ -56,6 +56,24 @@ class ServerTest < StellrTest
     assert_equal 2, @server.size( 'default' )
   end
   
+  def test_index_multiple_records_arrays
+    @server.register 'default'
+    @server.add_records 'default', 
+                        [ [ { :id => 1, :text => 'hello world' }, 2],
+                          [ { :id => 2, :text => 'hello world two' }, nil ] ]
+    @server.batch_finished 'default'
+    assert_equal 2, @server.size( 'default' )
+  end
+  
+  def test_index_multiple_records_hashes
+    @server.register 'default'
+    @server.add_records 'default', 
+                        [ { :id => 1, :text => 'hello world' },
+                          { :id => 2, :text => 'hello world two' } ]
+    @server.batch_finished 'default'
+    assert_equal 2, @server.size( 'default' )
+  end
+  
   def test_delete_data_queued
     coll = "del-queued"
     @server.register coll, :strategy => :queueing

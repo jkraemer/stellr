@@ -29,7 +29,9 @@ module Stellr
       end
 
       def sync_indexes
+        logger.debug "syncing #{searching_directory} to #{indexing_directory} ..."
         system("rsync -r --delete #{searching_directory}/ #{indexing_directory}")
+        logger.debug "done."
       end
 
     end

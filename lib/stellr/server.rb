@@ -68,8 +68,12 @@ module Stellr
     #
     #
     def register( name, options = {} )
+      raise "invalid collection name >#{name}<, may only contain a-zA-Z0-9_-" unless name =~ /^([a-zA-Z0-9_-]+)$/
+      name.untaint
       @collections.synchronize do
-        @collections[name] ||= create_collection( name, options )
+        collection = (@collections[name] ||= create_collection( name, options ))
+        save_collection_config name, options unless options.nil? or options.empty?
+        collection
       end
     end
 
@@ -117,24 +121,19 @@ module Stellr
     # if nil is given for options, the method tries to locate a previously
     # saved collection configuration and restore from it.
     def create_collection( name, options )
-      raise "invalid collection name >#{name}<, may only contain a-zA-Z0-9_-" unless name =~ /^([a-zA-Z0-9_-]+)$/
-      name.untaint
-      save_config = true
-      if options.nil?
-        options = load_collection_config name
-        save_config = false
-      end
+      options ||= load_collection_config name
       raise "No options given for collection #{name} and no stored configuration found." if options.nil?
 
       options[:path] = File.join( @config.data_dir, name )
-      save_collection_config name, options if save_config
       return Collections::Base.create( name, {:logger => @logger}.merge(options) )
     end
 
+    # TODO move into collection?
     def save_collection_config( name, options )
       path = collection_config_path name
       ( File.open(path, 'w') << YAML.dump(options) ).close
       @logger.info "wrote collection config to #{path}"
+      @logger.debug "config is now:\n#{options.inspect}"
     end
 
     def load_collection_config( name )

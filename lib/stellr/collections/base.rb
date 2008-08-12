@@ -6,12 +6,14 @@ module Stellr
       include Ferret::Index
       include Stellr::Utils::Shutdown
       include Stellr::Utils::Observable
-      attr_reader :name
+      attr_reader :name, :logger
 
       def self.create( name, options )
+        log = (options[:logger] ||= (require 'logger'; Logger.new 'stellr.log'))
         collection_class = collection_class_for_options options
         collection       = collection_class.new( name, options )
         if strategy_class = strategy_class_for_options( options )
+          log.debug "using strategy #{strategy_class}"
           strategy_class.new( collection, options )
         else
           collection
@@ -19,11 +21,11 @@ module Stellr
       end
 
       def initialize( name, options )
-        @logger = options[:logger] || (require 'logger'; Logger.new 'stellr.log')
+        @logger = options[:logger]
         @name = name
         @options = options.dup
       end
-
+      
       # called whenever the strategy thinks it's a good time do do something
       # timeconsuming (like switching indexes, optimizing, flushing, ...)
       def batch_finished

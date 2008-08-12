@@ -4,7 +4,21 @@ module Stellr
 
     # Queueing strategy. Any index modifying methods return immediately, actions 
     # are queued and executed asynchronously in order of arrival.
-    # 
+    #
+    # Unless you're using the static collection type, indexes will be switched
+    # whenever options[:max_batch_size] (which defaults to 200) is reached,
+    # and when the queue is empty.
+    #
+    # with static collections manually calling switch is required, and this call
+    # will block until the switch is actually done. 
+    #
+    # However this does not mean that
+    # all records from the queue have been processed, the switch may also occur
+    # between processing of add_record or add_records calls.
+    #
+    # FIXME fix this: switch should be an operation that is enqueued just like
+    # add_record so it occurs at the point in time the client desires.
+    # Is implicit switching really that useful? Definitely not with static collections...
     class Queueing < Base
 
       def initialize( collection, options )

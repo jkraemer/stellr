@@ -44,8 +44,9 @@ module Stellr
       def delete_record( record )
         raise ArgumentError.new("record must contain :id field") if record[:id].nil?
         @writer_monitor.synchronize do
+          w = writer
           @processed_records += 1
-          writer.delete :id, record[:id].to_s
+          w.delete :id, record[:id].to_s
           w.commit
         end
         true

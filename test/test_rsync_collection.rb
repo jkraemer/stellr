@@ -10,7 +10,7 @@ class RSyncCollectionTest < StellrTest
 
   def teardown
     super
-    @collection.close
+    @collection.close if @collection
   end
 
   def test_create
@@ -67,6 +67,7 @@ class RSyncCollectionTest < StellrTest
   
   def default_collection_options( options = {} )
     { :recreate => false,
-      :path     => INDEX_TMP_TEST_DIR }.update( options )
+      :path     => INDEX_TMP_TEST_DIR,
+      :logger => Logger.new('/tmp/stellr/test.log') }.update( options )
   end
 end

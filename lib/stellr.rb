@@ -18,7 +18,7 @@ require 'stellr/search'
 $SAFE = 1
 
 module Stellr
-  VERSION = '0.1.1'
+  VERSION = '0.1.2'
   
   def self.start_server( config )
     if config.script

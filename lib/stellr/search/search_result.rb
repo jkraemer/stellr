@@ -16,6 +16,14 @@ module Stellr
         @field_data[name]
       end
       alias [] field
+      
+      def to_json
+        {
+          :doc_id => @doc_id,
+          :score => @score,
+          :data => @field_data
+        }.to_json
+      end
     end
   end
 end

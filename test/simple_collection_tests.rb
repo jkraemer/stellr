@@ -33,6 +33,19 @@ module SimpleCollectionTests
     assert results.find {|r| r[:id] == '2'}
     assert_equal movies(:caligari)[:title], results.first[:title]
   end
+  
+  def test_search_results_json
+    index_something
+    @collection.switch
+    result = @collection.search 'cabinet', :get_fields => [ :title ]
+    assert json = result.to_json
+    result2 = JSON.parse json
+    
+    assert_equal 2, result2['total_hits']
+    assert result2['results'].find {|r| r['data']['id'] == '1'}
+    assert result2['results'].find {|r| r['data']['id'] == '2'}
+    assert_equal movies(:caligari)[:title], result2['results'].first['data']['title']
+  end
 
   def test_delete
     @collection << { :id => 1, :title => movies(:caligari)[:title] }

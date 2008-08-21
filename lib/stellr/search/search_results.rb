@@ -9,6 +9,15 @@ module Stellr
       def initialize
         @results = []
       end
+      
+      def to_json
+        {
+          :results => @results,
+          :total_hits => total_hits,
+          :current_page => current_page,
+          :per_page => per_page
+        }.to_json
+      end
 
       def method_missing(symbol, *args, &block)
         @results.send(symbol, *args, &block)

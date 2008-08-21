@@ -68,8 +68,7 @@ module Stellr
     #
     #
     def register( name, options = {} )
-      raise "invalid collection name >#{name}<, may only contain a-zA-Z0-9_-" unless name =~ /^([a-zA-Z0-9_-]+)$/
-      name.untaint
+      untaint_collection_name name
       @collections.synchronize do
         collection = (@collections[name] ||= create_collection( name, options ))
         save_collection_config name, options unless options.nil? or options.empty?
@@ -138,13 +137,25 @@ module Stellr
 
     def load_collection_config( name )
       path = collection_config_path name
-      conf = YAML.load( File.read(path) ) if File.readable?(path) rescue nil
+      @logger.debug "trying to load collection config from #{path}"
+      conf = begin
+        YAML.load( File.read(path) ) if File.readable?(path)
+      rescue
+        @logger.error "error loading config: #{$!}\n#{$!.backtrace.join "\n"}"
+        nil
+      end
       @logger.info "loaded collection config from #{path}" unless conf.nil?
       return conf
     end
 
     def collection_config_path( name )
-      File.join @config.conf_dir, "#{name}.yml"
+      untaint_collection_name name
+      File.join @config.conf_dir, "#{name.untaint}.yml"
+    end
+    
+    def untaint_collection_name(name)
+      raise "invalid collection name >#{name}<, may only contain a-zA-Z0-9_-" unless name =~ /^([a-zA-Z0-9_-]+)$/
+      name.untaint
     end
 
     # called by shutdown

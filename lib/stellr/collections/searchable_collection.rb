@@ -28,7 +28,7 @@ module Stellr
 
         if options[:page]
           results.current_page = options.delete(:page).to_i
-          options[:limit] = results.per_page = options.delete(:per_page) || 10
+          options[:limit] = results.per_page = (options.delete(:per_page).to_i rescue nil) || 10
           options[:offset] = (p = results.current_page - 1) <= 0 ? 0 : p * results.per_page
         end
 
